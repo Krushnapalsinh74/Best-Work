@@ -5,7 +5,8 @@
   "scripts": {
     "build": "pnpm run typecheck && pnpm -r --if-present run build",
     "typecheck:libs": "tsc --build",
-    "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck"
+    "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck",
+    "start": "pnpm run build && start \"API Server\" pnpm --filter \"@workspace/api-server\" start && start \"Admin Dashboard\" pnpm --filter \"@workspace/dokra-admin\" serve"
   },
   "private": true,
   "devDependencies": {
