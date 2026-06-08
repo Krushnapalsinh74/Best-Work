@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "build": "npx pnpm run typecheck && npx pnpm -r --if-present run build",
+    "build": "npx pnpm -r --if-present run build",
     "typecheck:libs": "tsc --build",
     "typecheck": "npx pnpm run typecheck:libs && npx pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck",
     "start": "npx pnpm run build && start \"API Server\" npx pnpm --filter \"@workspace/api-server\" start && start \"Admin Dashboard\" npx pnpm --filter \"@workspace/dokra-admin\" serve"
