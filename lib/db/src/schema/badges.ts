@@ -1,17 +1,17 @@
-import { pgTable, text, serial, timestamp, integer } from "drizzle-orm/pg-core";
+import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
-export const badgesTable = pgTable("badges", {
-  id: serial("id").primaryKey(),
+export const badgesTable = sqliteTable("badges", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   name: text("name").notNull(),
   description: text("description"),
   tier: text("tier").notNull().default("bronze"),
   imageUrl: text("image_url"),
   criteria: text("criteria"),
   awardedCount: integer("awarded_count").notNull().default(0),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
+  createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull().$defaultFn(() => new Date()),
+  updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull().$defaultFn(() => new Date()).$onUpdate(() => new Date()),
 });
 
 export const insertBadgeSchema = createInsertSchema(badgesTable).omit({ id: true, createdAt: true, updatedAt: true });

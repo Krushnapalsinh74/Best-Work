@@ -1,9 +1,9 @@
-import { pgTable, text, serial, timestamp, integer } from "drizzle-orm/pg-core";
+import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
-export const reportsTable = pgTable("reports", {
-  id: serial("id").primaryKey(),
+export const reportsTable = sqliteTable("reports", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   reporterId: integer("reporter_id").notNull(),
   reporterName: text("reporter_name").notNull(),
   reportedUserId: integer("reported_user_id"),
@@ -13,8 +13,8 @@ export const reportsTable = pgTable("reports", {
   description: text("description").notNull(),
   status: text("status").notNull().default("pending"),
   resolution: text("resolution"),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-  resolvedAt: timestamp("resolved_at", { withTimezone: true }),
+  createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull().$defaultFn(() => new Date()),
+  resolvedAt: integer("resolved_at", { mode: "timestamp_ms" }),
 });
 
 export const insertReportSchema = createInsertSchema(reportsTable).omit({ id: true, createdAt: true });

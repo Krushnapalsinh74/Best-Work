@@ -1,9 +1,9 @@
-import { pgTable, text, serial, timestamp, real, integer } from "drizzle-orm/pg-core";
+import { sqliteTable, text, real, integer } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
-export const challengesTable = pgTable("challenges", {
-  id: serial("id").primaryKey(),
+export const challengesTable = sqliteTable("challenges", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   title: text("title").notNull(),
   description: text("description"),
   type: text("type").notNull().default("distance"),
@@ -15,8 +15,8 @@ export const challengesTable = pgTable("challenges", {
   participantCount: integer("participant_count").notNull().default(0),
   startDate: text("start_date").notNull(),
   endDate: text("end_date").notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
+  createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull().$defaultFn(() => new Date()),
+  updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull().$defaultFn(() => new Date()).$onUpdate(() => new Date()),
 });
 
 export const insertChallengeSchema = createInsertSchema(challengesTable).omit({ id: true, createdAt: true, updatedAt: true });

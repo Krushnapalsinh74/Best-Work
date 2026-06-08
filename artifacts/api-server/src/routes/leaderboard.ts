@@ -8,7 +8,7 @@ router.get("/leaderboard", async (req, res): Promise<void> => {
   const { scope, state, city, period, activityType, limit = 50 } = req.query;
   const limitNum = parseInt(limit as string, 10);
 
-  let distanceCol = usersTable.totalDistance;
+  let distanceCol: any = usersTable.totalDistance;
   if (activityType === "walking") distanceCol = usersTable.walkingDistance;
   else if (activityType === "running") distanceCol = usersTable.runningDistance;
   else if (activityType === "cycling") distanceCol = usersTable.cyclingDistance;

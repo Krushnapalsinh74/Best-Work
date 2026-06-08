@@ -1,9 +1,9 @@
-import { pgTable, text, serial, timestamp, boolean, real, integer } from "drizzle-orm/pg-core";
+import { sqliteTable, text, real, integer } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
-export const usersTable = pgTable("users", {
-  id: serial("id").primaryKey(),
+export const usersTable = sqliteTable("users", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   mobile: text("mobile").notNull(),
@@ -11,7 +11,7 @@ export const usersTable = pgTable("users", {
   city: text("city"),
   state: text("state"),
   status: text("status").notNull().default("active"),
-  isVerified: boolean("is_verified").notNull().default(false),
+  isVerified: integer("is_verified", { mode: "boolean" }).notNull().default(false),
   totalDistance: real("total_distance").notNull().default(0),
   walkingDistance: real("walking_distance").notNull().default(0),
   runningDistance: real("running_distance").notNull().default(0),
@@ -21,9 +21,9 @@ export const usersTable = pgTable("users", {
   points: integer("points").notNull().default(0),
   badgeCount: integer("badge_count").notNull().default(0),
   suspendedReason: text("suspended_reason"),
-  lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
+  lastLoginAt: integer("last_login_at", { mode: "timestamp_ms" }),
+  createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull().$defaultFn(() => new Date()),
+  updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull().$defaultFn(() => new Date()).$onUpdate(() => new Date()),
 });
 
 export const insertUserSchema = createInsertSchema(usersTable).omit({ id: true, createdAt: true, updatedAt: true });
