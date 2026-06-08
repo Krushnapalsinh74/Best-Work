@@ -3,20 +3,30 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: DOKRA Running Club Super Admin API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
-    description: Health operations
+  - name: auth
+  - name: users
+  - name: activities
+  - name: challenges
+  - name: events
+  - name: badges
+  - name: leaderboard
+  - name: notifications
+  - name: analytics
+  - name: reports
+  - name: settings
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,13 +34,1360 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  # AUTH
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Admin login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout
+      responses:
+        "200":
+          description: Logged out
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current admin
+      responses:
+        "200":
+          description: Current admin
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminUser"
+
+  # USERS
+  /users:
+    get:
+      operationId: listUsers
+      tags: [users]
+      summary: List users with filters
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20 }
+        - name: search
+          in: query
+          schema: { type: string }
+        - name: state
+          in: query
+          schema: { type: string }
+        - name: city
+          in: query
+          schema: { type: string }
+        - name: gender
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string }
+        - name: activityType
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Paginated user list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserListResponse"
+
+  /users/{id}:
+    get:
+      operationId: getUser
+      tags: [users]
+      summary: Get user profile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateUser
+      tags: [users]
+      summary: Update user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdate"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+
+  /users/{id}/suspend:
+    post:
+      operationId: suspendUser
+      tags: [users]
+      summary: Suspend user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserActionInput"
+      responses:
+        "200":
+          description: User suspended
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+
+  /users/{id}/ban:
+    post:
+      operationId: banUser
+      tags: [users]
+      summary: Ban user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserActionInput"
+      responses:
+        "200":
+          description: User banned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+
+  /users/{id}/restore:
+    post:
+      operationId: restoreUser
+      tags: [users]
+      summary: Restore user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: User restored
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+
+  /users/{id}/verify:
+    post:
+      operationId: verifyUser
+      tags: [users]
+      summary: Verify user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: User verified
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+
+  /users/{id}/activities:
+    get:
+      operationId: listUserActivityHistory
+      tags: [users]
+      summary: Get user activity history
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: User activities
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ActivityListResponse"
+
+  # ACTIVITIES
+  /activities:
+    get:
+      operationId: listActivities
+      tags: [activities]
+      summary: List all activities
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20 }
+        - name: type
+          in: query
+          schema: { type: string }
+        - name: flagged
+          in: query
+          schema: { type: boolean }
+        - name: state
+          in: query
+          schema: { type: string }
+        - name: city
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Activity list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ActivityListResponse"
+
+  /activities/{id}:
+    get:
+      operationId: getActivity
+      tags: [activities]
+      summary: Get activity detail
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Activity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Activity"
+    delete:
+      operationId: deleteActivity
+      tags: [activities]
+      summary: Delete activity
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Deleted
+
+  /activities/{id}/flag:
+    post:
+      operationId: flagActivity
+      tags: [activities]
+      summary: Flag suspicious activity
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FlagInput"
+      responses:
+        "200":
+          description: Flagged
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Activity"
+
+  # CHALLENGES
+  /challenges:
+    get:
+      operationId: listChallenges
+      tags: [challenges]
+      summary: List challenges
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20 }
+        - name: type
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Challenge list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChallengeListResponse"
+    post:
+      operationId: createChallenge
+      tags: [challenges]
+      summary: Create challenge
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChallengeInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Challenge"
+
+  /challenges/{id}:
+    get:
+      operationId: getChallenge
+      tags: [challenges]
+      summary: Get challenge
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Challenge
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Challenge"
+    patch:
+      operationId: updateChallenge
+      tags: [challenges]
+      summary: Update challenge
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChallengeUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Challenge"
+    delete:
+      operationId: deleteChallenge
+      tags: [challenges]
+      summary: Delete challenge
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Deleted
+
+  # EVENTS
+  /events:
+    get:
+      operationId: listEvents
+      tags: [events]
+      summary: List events
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20 }
+        - name: status
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Event list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventListResponse"
+    post:
+      operationId: createEvent
+      tags: [events]
+      summary: Create event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EventInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+
+  /events/{id}:
+    get:
+      operationId: getEvent
+      tags: [events]
+      summary: Get event
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Event
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+    patch:
+      operationId: updateEvent
+      tags: [events]
+      summary: Update event
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EventUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+    delete:
+      operationId: deleteEvent
+      tags: [events]
+      summary: Delete event
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Deleted
+
+  # BADGES
+  /badges:
+    get:
+      operationId: listBadges
+      tags: [badges]
+      summary: List badges
+      responses:
+        "200":
+          description: Badge list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Badge"
+    post:
+      operationId: createBadge
+      tags: [badges]
+      summary: Create badge
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BadgeInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Badge"
+
+  /badges/{id}:
+    patch:
+      operationId: updateBadge
+      tags: [badges]
+      summary: Update badge
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BadgeUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Badge"
+    delete:
+      operationId: deleteBadge
+      tags: [badges]
+      summary: Delete badge
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Deleted
+
+  # LEADERBOARD
+  /leaderboard:
+    get:
+      operationId: getLeaderboard
+      tags: [leaderboard]
+      summary: Get leaderboard
+      parameters:
+        - name: scope
+          in: query
+          schema: { type: string }
+        - name: state
+          in: query
+          schema: { type: string }
+        - name: city
+          in: query
+          schema: { type: string }
+        - name: period
+          in: query
+          schema: { type: string }
+        - name: activityType
+          in: query
+          schema: { type: string }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 50 }
+      responses:
+        "200":
+          description: Leaderboard entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LeaderboardEntry"
+
+  # NOTIFICATIONS
+  /notifications:
+    get:
+      operationId: listNotifications
+      tags: [notifications]
+      summary: List notifications sent
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20 }
+      responses:
+        "200":
+          description: Notification list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotificationListResponse"
+    post:
+      operationId: sendNotification
+      tags: [notifications]
+      summary: Send notification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NotificationInput"
+      responses:
+        "201":
+          description: Notification sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Notification"
+
+  # ANALYTICS
+  /analytics/summary:
+    get:
+      operationId: getAnalyticsSummary
+      tags: [analytics]
+      summary: Get dashboard summary stats
+      responses:
+        "200":
+          description: Summary stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyticsSummary"
+
+  /analytics/user-growth:
+    get:
+      operationId: getUserGrowth
+      tags: [analytics]
+      summary: User growth over time
+      parameters:
+        - name: period
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Growth data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TimeSeriesPoint"
+
+  /analytics/activity-trends:
+    get:
+      operationId: getActivityTrends
+      tags: [analytics]
+      summary: Activity trends by type
+      parameters:
+        - name: period
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Trend data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityTrendPoint"
+
+  /analytics/state-breakdown:
+    get:
+      operationId: getStateBreakdown
+      tags: [analytics]
+      summary: Users and activities by state
+      responses:
+        "200":
+          description: State breakdown
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StateBreakdown"
+
+  /analytics/top-cities:
+    get:
+      operationId: getTopCities
+      tags: [analytics]
+      summary: Top cities by active users
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer, default: 10 }
+      responses:
+        "200":
+          description: Top cities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CityStats"
+
+  /analytics/activity-feed:
+    get:
+      operationId: getActivityFeed
+      tags: [analytics]
+      summary: Recent real-time activity feed
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20 }
+      responses:
+        "200":
+          description: Recent activities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityFeedItem"
+
+  # REPORTS
+  /reports:
+    get:
+      operationId: listReports
+      tags: [reports]
+      summary: List user reports
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20 }
+        - name: status
+          in: query
+          schema: { type: string }
+        - name: type
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Reports list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportListResponse"
+
+  /reports/{id}:
+    get:
+      operationId: getReport
+      tags: [reports]
+      summary: Get report detail
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Report"
+
+  /reports/{id}/resolve:
+    post:
+      operationId: resolveReport
+      tags: [reports]
+      summary: Resolve a report
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportResolution"
+      responses:
+        "200":
+          description: Resolved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Report"
+
+  # SETTINGS
+  /settings:
+    get:
+      operationId: getSettings
+      tags: [settings]
+      summary: Get app settings
+      responses:
+        "200":
+          description: Settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppSettings"
+    patch:
+      operationId: updateSettings
+      tags: [settings]
+      summary: Update app settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AppSettingsUpdate"
+      responses:
+        "200":
+          description: Updated settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppSettings"
+
+  /audit-logs:
+    get:
+      operationId: listAuditLogs
+      tags: [settings]
+      summary: List audit logs
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20 }
+        - name: adminId
+          in: query
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Audit logs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditLogListResponse"
+
 components:
   schemas:
     HealthStatus:
       type: object
+      required: [status]
       properties:
         status:
           type: string
-      required:
-        - status
 
+    LoginInput:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string }
+
+    AuthResponse:
+      type: object
+      required: [token, admin]
+      properties:
+        token: { type: string }
+        admin:
+          $ref: "#/components/schemas/AdminUser"
+
+    AdminUser:
+      type: object
+      required: [id, email, name, role]
+      properties:
+        id: { type: integer }
+        email: { type: string }
+        name: { type: string }
+        role: { type: string }
+        state: { type: ["string", "null"] }
+        city: { type: ["string", "null"] }
+        createdAt: { type: string, format: date-time }
+
+    User:
+      type: object
+      required: [id, name, email, mobile, status, createdAt]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        email: { type: string }
+        mobile: { type: string }
+        gender: { type: ["string", "null"] }
+        city: { type: ["string", "null"] }
+        state: { type: ["string", "null"] }
+        status: { type: string }
+        isVerified: { type: boolean }
+        totalDistance: { type: number }
+        totalActivities: { type: integer }
+        points: { type: integer }
+        createdAt: { type: string, format: date-time }
+
+    UserProfile:
+      type: object
+      required: [id, name, email, mobile, status, createdAt]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        email: { type: string }
+        mobile: { type: string }
+        gender: { type: ["string", "null"] }
+        city: { type: ["string", "null"] }
+        state: { type: ["string", "null"] }
+        status: { type: string }
+        isVerified: { type: boolean }
+        totalDistance: { type: number }
+        walkingDistance: { type: number }
+        runningDistance: { type: number }
+        cyclingDistance: { type: number }
+        totalActivities: { type: integer }
+        totalCalories: { type: integer }
+        points: { type: integer }
+        badgeCount: { type: integer }
+        createdAt: { type: string, format: date-time }
+        lastLoginAt: { type: ["string", "null"] }
+        suspendedReason: { type: ["string", "null"] }
+
+    UserUpdate:
+      type: object
+      properties:
+        name: { type: string }
+        city: { type: string }
+        state: { type: string }
+        gender: { type: string }
+
+    UserActionInput:
+      type: object
+      properties:
+        reason: { type: string }
+
+    UserListResponse:
+      type: object
+      required: [data, total, page, limit]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        total: { type: integer }
+        page: { type: integer }
+        limit: { type: integer }
+
+    Activity:
+      type: object
+      required: [id, userId, type, distance, duration, createdAt]
+      properties:
+        id: { type: integer }
+        userId: { type: integer }
+        userName: { type: string }
+        type: { type: string }
+        distance: { type: number }
+        duration: { type: integer }
+        calories: { type: integer }
+        pace: { type: ["number", "null"] }
+        city: { type: ["string", "null"] }
+        state: { type: ["string", "null"] }
+        isFlagged: { type: boolean }
+        flagReason: { type: ["string", "null"] }
+        createdAt: { type: string, format: date-time }
+
+    ActivityListResponse:
+      type: object
+      required: [data, total, page, limit]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Activity"
+        total: { type: integer }
+        page: { type: integer }
+        limit: { type: integer }
+
+    FlagInput:
+      type: object
+      required: [reason]
+      properties:
+        reason: { type: string }
+
+    Challenge:
+      type: object
+      required: [id, title, type, period, targetDistance, status, createdAt]
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        description: { type: ["string", "null"] }
+        type: { type: string }
+        period: { type: string }
+        targetDistance: { type: number }
+        targetDuration: { type: ["integer", "null"] }
+        activityTypes: { type: string }
+        status: { type: string }
+        participantCount: { type: integer }
+        startDate: { type: string }
+        endDate: { type: string }
+        createdAt: { type: string, format: date-time }
+
+    ChallengeInput:
+      type: object
+      required: [title, type, period, targetDistance, startDate, endDate]
+      properties:
+        title: { type: string }
+        description: { type: string }
+        type: { type: string }
+        period: { type: string }
+        targetDistance: { type: number }
+        targetDuration: { type: integer }
+        activityTypes: { type: string }
+        startDate: { type: string }
+        endDate: { type: string }
+
+    ChallengeUpdate:
+      type: object
+      properties:
+        title: { type: string }
+        description: { type: string }
+        targetDistance: { type: number }
+        status: { type: string }
+        endDate: { type: string }
+
+    ChallengeListResponse:
+      type: object
+      required: [data, total, page, limit]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Challenge"
+        total: { type: integer }
+        page: { type: integer }
+        limit: { type: integer }
+
+    Event:
+      type: object
+      required: [id, title, date, location, distance, capacity, status, createdAt]
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        description: { type: ["string", "null"] }
+        date: { type: string }
+        time: { type: string }
+        location: { type: string }
+        city: { type: ["string", "null"] }
+        state: { type: ["string", "null"] }
+        distance: { type: number }
+        capacity: { type: integer }
+        registeredCount: { type: integer }
+        status: { type: string }
+        createdAt: { type: string, format: date-time }
+
+    EventInput:
+      type: object
+      required: [title, date, time, location, distance, capacity]
+      properties:
+        title: { type: string }
+        description: { type: string }
+        date: { type: string }
+        time: { type: string }
+        location: { type: string }
+        city: { type: string }
+        state: { type: string }
+        distance: { type: number }
+        capacity: { type: integer }
+
+    EventUpdate:
+      type: object
+      properties:
+        title: { type: string }
+        description: { type: string }
+        date: { type: string }
+        time: { type: string }
+        location: { type: string }
+        capacity: { type: integer }
+        status: { type: string }
+
+    EventListResponse:
+      type: object
+      required: [data, total, page, limit]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Event"
+        total: { type: integer }
+        page: { type: integer }
+        limit: { type: integer }
+
+    Badge:
+      type: object
+      required: [id, name, tier, createdAt]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        description: { type: ["string", "null"] }
+        tier: { type: string }
+        imageUrl: { type: ["string", "null"] }
+        criteria: { type: ["string", "null"] }
+        awardedCount: { type: integer }
+        createdAt: { type: string, format: date-time }
+
+    BadgeInput:
+      type: object
+      required: [name, tier]
+      properties:
+        name: { type: string }
+        description: { type: string }
+        tier: { type: string }
+        imageUrl: { type: string }
+        criteria: { type: string }
+
+    BadgeUpdate:
+      type: object
+      properties:
+        name: { type: string }
+        description: { type: string }
+        tier: { type: string }
+        imageUrl: { type: string }
+        criteria: { type: string }
+
+    LeaderboardEntry:
+      type: object
+      required: [rank, userId, name, totalDistance, totalActivities]
+      properties:
+        rank: { type: integer }
+        userId: { type: integer }
+        name: { type: string }
+        city: { type: ["string", "null"] }
+        state: { type: ["string", "null"] }
+        totalDistance: { type: number }
+        totalActivities: { type: integer }
+        points: { type: integer }
+        activityType: { type: ["string", "null"] }
+
+    Notification:
+      type: object
+      required: [id, title, message, target, status, createdAt]
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        message: { type: string }
+        target: { type: string }
+        targetState: { type: ["string", "null"] }
+        targetCity: { type: ["string", "null"] }
+        status: { type: string }
+        sentCount: { type: integer }
+        createdAt: { type: string, format: date-time }
+
+    NotificationInput:
+      type: object
+      required: [title, message, target]
+      properties:
+        title: { type: string }
+        message: { type: string }
+        target: { type: string }
+        targetState: { type: string }
+        targetCity: { type: string }
+
+    NotificationListResponse:
+      type: object
+      required: [data, total, page, limit]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Notification"
+        total: { type: integer }
+        page: { type: integer }
+        limit: { type: integer }
+
+    AnalyticsSummary:
+      type: object
+      required: [totalUsers, activeUsers, newRegistrations, totalActivities, totalWalkingKm, totalRunningKm, totalCyclingKm, totalCalories, activeChallenges, upcomingEvents, flaggedActivities, pendingReports]
+      properties:
+        totalUsers: { type: integer }
+        activeUsers: { type: integer }
+        newRegistrations: { type: integer }
+        totalActivities: { type: integer }
+        totalWalkingKm: { type: number }
+        totalRunningKm: { type: number }
+        totalCyclingKm: { type: number }
+        totalCalories: { type: integer }
+        activeChallenges: { type: integer }
+        upcomingEvents: { type: integer }
+        flaggedActivities: { type: integer }
+        pendingReports: { type: integer }
+
+    TimeSeriesPoint:
+      type: object
+      required: [date, value]
+      properties:
+        date: { type: string }
+        value: { type: integer }
+
+    ActivityTrendPoint:
+      type: object
+      required: [date, walking, running, cycling]
+      properties:
+        date: { type: string }
+        walking: { type: integer }
+        running: { type: integer }
+        cycling: { type: integer }
+
+    StateBreakdown:
+      type: object
+      required: [state, userCount, activeUsers, totalActivities]
+      properties:
+        state: { type: string }
+        userCount: { type: integer }
+        activeUsers: { type: integer }
+        totalActivities: { type: integer }
+        totalDistanceKm: { type: number }
+
+    CityStats:
+      type: object
+      required: [city, state, activeUsers, totalActivities]
+      properties:
+        city: { type: string }
+        state: { type: string }
+        activeUsers: { type: integer }
+        totalActivities: { type: integer }
+
+    ActivityFeedItem:
+      type: object
+      required: [id, userId, userName, type, distance, createdAt]
+      properties:
+        id: { type: integer }
+        userId: { type: integer }
+        userName: { type: string }
+        type: { type: string }
+        distance: { type: number }
+        city: { type: ["string", "null"] }
+        state: { type: ["string", "null"] }
+        createdAt: { type: string, format: date-time }
+
+    Report:
+      type: object
+      required: [id, reporterId, type, status, createdAt]
+      properties:
+        id: { type: integer }
+        reporterId: { type: integer }
+        reporterName: { type: string }
+        reportedUserId: { type: ["integer", "null"] }
+        reportedUserName: { type: ["string", "null"] }
+        reportedActivityId: { type: ["integer", "null"] }
+        type: { type: string }
+        description: { type: string }
+        status: { type: string }
+        resolution: { type: ["string", "null"] }
+        createdAt: { type: string, format: date-time }
+        resolvedAt: { type: ["string", "null"] }
+
+    ReportListResponse:
+      type: object
+      required: [data, total, page, limit]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Report"
+        total: { type: integer }
+        page: { type: integer }
+        limit: { type: integer }
+
+    ReportResolution:
+      type: object
+      required: [resolution]
+      properties:
+        resolution: { type: string }
+        action: { type: string }
+
+    AppSettings:
+      type: object
+      required: [id]
+      properties:
+        id: { type: integer }
+        pointsPerKmWalking: { type: number }
+        pointsPerKmRunning: { type: number }
+        pointsPerKmCycling: { type: number }
+        minActivityDistanceKm: { type: number }
+        maxSpeedWalkingKmh: { type: number }
+        maxSpeedRunningKmh: { type: number }
+        maxSpeedCyclingKmh: { type: number }
+        maintenanceMode: { type: boolean }
+        updatedAt: { type: string, format: date-time }
+
+    AppSettingsUpdate:
+      type: object
+      properties:
+        pointsPerKmWalking: { type: number }
+        pointsPerKmRunning: { type: number }
+        pointsPerKmCycling: { type: number }
+        minActivityDistanceKm: { type: number }
+        maxSpeedWalkingKmh: { type: number }
+        maxSpeedRunningKmh: { type: number }
+        maxSpeedCyclingKmh: { type: number }
+        maintenanceMode: { type: boolean }
+
+    AuditLog:
+      type: object
+      required: [id, adminId, adminName, action, createdAt]
+      properties:
+        id: { type: integer }
+        adminId: { type: integer }
+        adminName: { type: string }
+        action: { type: string }
+        entityType: { type: ["string", "null"] }
+        entityId: { type: ["integer", "null"] }
+        ipAddress: { type: ["string", "null"] }
+        details: { type: ["string", "null"] }
+        createdAt: { type: string, format: date-time }
+
+    AuditLogListResponse:
+      type: object
+      required: [data, total, page, limit]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/AuditLog"
+        total: { type: integer }
+        page: { type: integer }
+        limit: { type: integer }

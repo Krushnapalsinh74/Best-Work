@@ -1,0 +1,471 @@
+PROJECT NAME:
+DOKRA Running Club - Super Admin Web Panel
+
+IMPORTANT:
+I will upload the official DOKRA Running Club logo. Use that logo throughout the admin panel branding, login page, sidebar, favicon, header, loading screens, and dashboard identity.
+
+==================================================
+PROJECT GOAL
+==================================================
+
+Build a production-grade Admin Web Application for DOKRA Running Club.
+
+DOKRA Running Club is a nationwide fitness platform operating across India.
+
+The platform supports:
+
+- Walking
+- Running
+- Cycling
+
+The Admin Panel must be powerful enough to manage millions of users across India.
+
+The admin panel must be scalable, secure, modular, and enterprise-level.
+
+==================================================
+TECH STACK
+==================================================
+
+Frontend:
+- Next.js latest
+- TypeScript
+- Tailwind CSS
+- ShadCN UI
+
+Backend:
+- Node.js
+- Express.js
+- TypeScript
+
+Database:
+- PostgreSQL
+
+ORM:
+- Prisma
+
+Authentication:
+- JWT
+- Refresh Tokens
+- Role Based Access Control
+
+Storage:
+- AWS S3 ready architecture
+
+Maps:
+- Google Maps Integration
+
+Charts:
+- Recharts
+
+Notifications:
+- Firebase Push Notifications
+
+==================================================
+ADMIN ROLES
+==================================================
+
+1. Super Admin
+2. State Admin
+3. City Admin
+4. Support Admin
+5. Event Admin
+6. Moderator
+
+Role permissions must be configurable.
+
+==================================================
+FOLDER STRUCTURE
+==================================================
+
+Generate complete folder structure.
+
+Create folders:
+
+/frontend
+/backend
+/database
+/docs
+/apis
+/uploads
+/scripts
+
+==================================================
+API MANAGEMENT
+==================================================
+
+IMPORTANT REQUIREMENT
+
+Create a dedicated folder:
+
+/docs/apis
+
+Inside this folder automatically generate:
+
+auth-api.md
+user-api.md
+activity-api.md
+challenge-api.md
+leaderboard-api.md
+event-api.md
+badge-api.md
+reward-api.md
+notification-api.md
+analytics-api.md
+report-api.md
+settings-api.md
+
+Every API document must contain:
+
+- Endpoint
+- Method
+- Parameters
+- Request Body
+- Response Body
+- Validation Rules
+- Error Codes
+- Permission Requirements
+
+Also generate:
+
+complete-api-reference.md
+
+containing every API in one place.
+
+==================================================
+LOGIN SYSTEM
+==================================================
+
+Create:
+
+- Login Page
+- Forgot Password
+- Reset Password
+- OTP Verification
+- Two Factor Authentication
+
+==================================================
+DASHBOARD
+==================================================
+
+Dashboard must show:
+
+- Total Users
+- Active Users
+- New Registrations
+- Total Activities
+- Total Walking Distance
+- Total Running Distance
+- Total Cycling Distance
+- Total Calories Burned
+- Active Challenges
+- Upcoming Events
+
+Display:
+
+- India Map
+- State Wise Data
+- City Wise Data
+- Real-Time Activity Feed
+
+==================================================
+USER MANAGEMENT
+==================================================
+
+User Search
+
+Filters:
+
+- Name
+- Mobile
+- Email
+- City
+- State
+- Gender
+- Activity Level
+
+User Profile Page
+
+Show:
+
+- Personal Details
+- Activity History
+- Badges
+- Achievements
+- Reports
+- Login History
+
+Admin Actions:
+
+- Suspend
+- Ban
+- Verify
+- Restore
+- Delete
+
+==================================================
+ACTIVITY MANAGEMENT
+==================================================
+
+Support:
+
+- Walking
+- Running
+- Cycling
+
+Track:
+
+- Distance
+- Duration
+- Calories
+- Pace
+- Route
+- GPS Data
+
+Create GPS Fraud Detection.
+
+Flag:
+
+- Impossible Speeds
+- GPS Spoofing
+- Suspicious Routes
+
+==================================================
+BADGE SYSTEM
+==================================================
+
+Admin can:
+
+- Create Badge
+- Edit Badge
+- Delete Badge
+
+Upload:
+
+- PNG
+- SVG
+
+Badge Types:
+
+- Bronze
+- Silver
+- Gold
+- Platinum
+- Diamond
+
+==================================================
+MEDAL SYSTEM
+==================================================
+
+Create medal management.
+
+Medals appear publicly on user profiles.
+
+Users can earn medals through:
+
+- Challenges
+- Events
+- Milestones
+
+==================================================
+CHALLENGE MANAGEMENT
+==================================================
+
+Daily Challenges
+Weekly Challenges
+Monthly Challenges
+Yearly Challenges
+
+Create Challenge Builder.
+
+==================================================
+LEADERBOARD MANAGEMENT
+==================================================
+
+Create:
+
+India Leaderboard
+State Leaderboard
+City Leaderboard
+
+Daily
+Weekly
+Monthly
+Yearly
+
+==================================================
+EVENT MANAGEMENT
+==================================================
+
+Create Event Module.
+
+Fields:
+
+- Title
+- Description
+- Date
+- Time
+- Location
+- Distance
+- Capacity
+
+QR Check-In System.
+
+==================================================
+MARATHON MODULE
+==================================================
+
+Support:
+
+5K
+10K
+21K
+42K
+
+Bib Number Generation
+
+Certificate Generation
+
+==================================================
+REWARD MARKETPLACE
+==================================================
+
+Admin can manage:
+
+- Products
+- Inventory
+- Orders
+- Redemptions
+
+Points Based System
+
+No Cash Earnings.
+
+==================================================
+REPORTS SYSTEM
+==================================================
+
+Users can report:
+
+- Abuse
+- Fake Activity
+- Harassment
+- Cheating
+
+Create complete moderation workflow.
+
+==================================================
+NOTIFICATION SYSTEM
+==================================================
+
+Send:
+
+- Push Notifications
+- Announcements
+- Event Updates
+- Challenge Updates
+
+Target:
+
+- All Users
+- State Users
+- City Users
+
+==================================================
+ANALYTICS
+==================================================
+
+Generate advanced analytics:
+
+- User Growth
+- Activity Trends
+- Retention
+- Challenge Participation
+- Event Participation
+- Top Cities
+- Top States
+
+==================================================
+SETTINGS
+==================================================
+
+Manage:
+
+- App Settings
+- Points Rules
+- Badge Rules
+- Event Rules
+- Notification Rules
+
+==================================================
+SECURITY
+==================================================
+
+Implement:
+
+- JWT
+- RBAC
+- Rate Limiting
+- Audit Logs
+- Login History
+- Activity Logs
+
+==================================================
+AUDIT LOGS
+==================================================
+
+Track every admin action.
+
+Store:
+
+- Admin Name
+- Action
+- Time
+- IP Address
+
+==================================================
+DOCUMENTATION
+==================================================
+
+Generate:
+
+README.md
+
+SETUP_GUIDE.md
+
+DATABASE_SCHEMA.md
+
+API_REFERENCE.md
+
+ADMIN_MANUAL.md
+
+DEPLOYMENT_GUIDE.md
+
+==================================================
+FINAL REQUIREMENT
+==================================================
+
+Generate complete production-ready source code structure.
+
+Generate database schema.
+
+Generate Prisma models.
+
+Generate all routes.
+
+Generate all controllers.
+
+Generate all services.
+
+Generate all API documentation.
+
+Generate all admin pages.
+
+Generate reusable components.
+
+Generate role permissions.
+
+Generate seed data.
+
+Generate scalable architecture.
+
+The output must be organized exactly like a real enterprise software project and ready for future integration with the DOKRA Running Club mobile application.
